@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include <iostream>
+#include <type_traits>
 
 namespace Stephan {
 
@@ -96,9 +97,10 @@ public:
 
 	// Division
 	complex<T> operator/(const complex<T>& rhs) {
-		T divisor = (this->real_part * this->real_part) + (this->imaginary_part * this->imaginary_part);
+		static_assert(is_floating_point<T>::value);
+		T divisor = (rhs.real_part * rhs.real_part) + (rhs.imaginary_part * rhs.imaginary_part);
 		T real_numerator = (this->real_part * rhs.real_part) + (this->imaginary_part * rhs.imaginary_part);
-		T imaginary_numerator = (rhs.imaginary_part * this->real_part) - (rhs.real_part * this->imaginary_part);
+		T imaginary_numerator = (this->imaginary_part * rhs.real_part) - (this->real_part * rhs.imaginary_part);
 		return complex(T(real_numerator/divisor), T(imaginary_numerator/divisor));
 	}
 	complex<T> operator/(const T& value) {
@@ -143,6 +145,7 @@ complex<T> T::operator*(const complex<T>& value) {
 }
 template <typename T>
 complex<T> T::operator/(const complex<T>& value) {
+	static_assert(is_floating_point<T>::value);
 	return complex<T>(*this, 0)/value;
 }
 
